@@ -1,0 +1,54 @@
+# ZIQWEAR backend service.
+#
+#   sudo cp deploy/ziqwear-backend.service /etc/systemd/system/
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable --now ziqwear-backend
+#   systemctl status ziqwear-backend
+#   journalctl -u ziqwear-backend -f
+#
+# Deliberately NO EnvironmentFile=: systemd reads that file literally, so
+# DATABASE_URL="file:./ziqwear.db" would arrive with the quotes still attached
+# and Prisma would reject it. The app calls dotenv itself and reads
+# /opt/ziqwear/backend/.env, which handles quotes correctly.
+
+[Unit]
+Description=ZIQWEAR backend (Express + Prisma/SQLite)
+Documentation=file:///opt/ziqwear/deploy/DEPLOY.md
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=ziqwear
+Group=ziqwear
+WorkingDirectory=/opt/ziqwear/backend
+
+# HOST=127.0.0.1 in backend/.env keeps the API off the public interface; only
+# nginx should be able to reach it.
+ExecStart=/usr/bin/node dist/index.js
+
+Restart=always
+RestartSec=3
+# The app gives in-flight requests 10s, then exits itself.
+TimeoutStopSec=20
+KillMode=mixed
+
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=ziqwear-backend
+
+# SQLite writes -journal/-wal files beside the database and uploads land in
+# backend/uploads, so the project tree has to stay writable.
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=true
+ReadWritePaths=/opt/ziqwear
+
+LimitNOFILE=65536
+
+# Log noise guard: do not let a runaway request loop fill the disk.
+JournalSizeLimit=100M
+
+[Install]
+WantedBy=multi-user.target

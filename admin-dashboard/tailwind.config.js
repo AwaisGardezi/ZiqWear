@@ -1,0 +1,86 @@
+/** @type {import('tailwindcss').Config} */
+export default {
+  content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
+  ],
+  darkMode: 'class',
+  theme: {
+    extend: {
+      colors: {
+        // ---- ivory brand tokens (shared with the storefront) ----
+        paper: "#f4efe6",
+        cream: "#ece5d7",
+        "cream-deep": "#e4dcc9",
+        sand: "#dcd2bd",
+        ink: "#1b1714",
+        line: "#d7ccb7",
+        muted: "#645a4b",
+        sale: "#b3382f",
+        ok: "#3f7d4c",
+        espresso: { DEFAULT: "#14110e", 2: "#1f1a15" },
+        "on-dark": "#f6f2ea",
+        brass: {
+          DEFAULT: "#86622a",
+          dark: "#6f4f13",
+          50: "#faf7f1",
+          100: "#f2e8d5",
+          200: "#e6d3ad",
+          300: "#d4b981",
+          400: "#bfa05a",
+          500: "#a3823c",
+          600: "#86622a",
+          700: "#6f4f13",
+          800: "#5a4015",
+          900: "#472f10",
+        },
+        // `primary` / `gold` are the accent ramps the app references; both now
+        // resolve to the brass accent so the admin reads as the same brand.
+        primary: {
+          50: "#faf7f1",
+          100: "#f2e8d5",
+          200: "#e6d3ad",
+          300: "#d4b981",
+          400: "#bfa05a",
+          500: "#a3823c",
+          600: "#86622a",
+          700: "#6f4f13",
+          800: "#5a4015",
+          900: "#472f10",
+        },
+        gold: {
+          50: "#faf7f1",
+          100: "#f2e8d5",
+          200: "#e6d3ad",
+          300: "#d4b981",
+          400: "#bfa05a",
+          500: "#a3823c",
+          600: "#86622a",
+          700: "#6f4f13",
+          800: "#5a4015",
+          900: "#472f10",
+        },
+        // `dark` stays the espresso chrome ramp but the steps are warm now.
+        dark: {
+          50: "#f6f2ea",
+          100: "#e7e0d2",
+          200: "#d0c8b6",
+          300: "#b0a691",
+          400: "#8a7d68",
+          500: "#645a4b",
+          600: "#463a29",
+          700: "#33291d",
+          800: "#241d16",
+          900: "#1f1a15",
+          950: "#14110e",
+        },
+      },
+      fontFamily: {
+        sans: ['Inter', 'system-ui', 'sans-serif'],
+        display: ['Instrument Serif', 'Georgia', 'serif'],
+        ui: ['Comfortaa', 'system-ui', 'sans-serif'],
+      },
+    },
+  },
+  plugins: [],
+}

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Checkout — ZIQWEAR</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;500;600;700&family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+<link rel="icon" href="assets/img/favicon.png" type="image/png">
+<link rel="apple-touch-icon" href="assets/img/favicon.png">
+</head>
+<body data-page="checkout">
+
+<div id="announcement"></div>
+<header id="site-header"></header>
+
+<main>
+  <div class="wrap">
+    <div class="page-head" style="border:0;padding-bottom:10px">
+      <nav class="breadcrumb"><a href="index.html">Home</a><span>/</span><span>Checkout</span></nav>
+      <h1>Checkout</h1>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <div class="checkout" id="checkout">
+      <form id="co-form" novalidate>
+        <div class="co-section">
+          <h2><span>1</span> Contact</h2>
+          <div class="field-row">
+            <div class="field"><label for="name">Full name *</label><input id="name" name="name" required autocomplete="name" placeholder="Ali Raza"></div>
+            <div class="field"><label for="phone">Phone *</label><input id="phone" name="phone" required autocomplete="tel" placeholder="03xx xxxxxxx"></div>
+          </div>
+          <div class="field"><label for="email">Email (optional)</label><input id="email" name="email" type="email" autocomplete="email" placeholder="you@email.com"></div>
+        </div>
+
+        <div class="co-section">
+          <h2><span>2</span> Shipping address</h2>
+          <div class="field"><label for="address">Street address *</label><input id="address" name="address" required autocomplete="street-address" placeholder="House 24, Street 8, Block C"></div>
+          <div class="field-row">
+            <div class="field"><label for="city">City *</label><input id="city" name="city" required autocomplete="address-level2" placeholder="Multan"></div>
+            <div class="field"><label for="province">Province *</label>
+              <select id="province" name="province" required>
+                <option value="">Select province</option>
+                <option>Punjab</option>
+                <option>Sindh</option>
+                <option>Khyber Pakhtunkhwa</option>
+                <option>Balochistan</option>
+                <option>Islamabad Capital Territory</option>
+                <option>Gilgit-Baltistan</option>
+                <option>Azad Kashmir</option>
+              </select>
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field"><label for="postal">Postal code (optional)</label><input id="postal" name="postal" autocomplete="postal-code" placeholder="60000"></div>
+            <div class="field"><label for="landmark">Nearest landmark (optional)</label><input id="landmark" name="landmark" placeholder="Near Chowk Ghanta Ghar"></div>
+          </div>
+        </div>
+
+        <div class="co-section">
+          <h2><span>3</span> Delivery method</h2>
+          <div id="shipping-methods"></div>
+        </div>
+
+        <div class="co-section">
+          <h2><span>4</span> Payment</h2>
+          <div id="payment-methods"></div>
+          <div class="field" style="margin-top:16px">
+            <label for="notes">Order notes (optional)</label>
+            <textarea id="notes" name="notes" placeholder="Anything we should know — delivery instructions, gift note…"></textarea>
+          </div>
+        </div>
+
+        <button class="btn btn--full" type="submit" id="place-order" style="padding:19px">Place order</button>
+        <p style="font-size:11.5px;color:var(--muted);text-align:center;margin-top:14px">
+          By placing this order you agree to our exchange policy. You will receive a confirmation on WhatsApp.
+        </p>
+      </form>
+
+      <aside class="summary" id="summary"></aside>
+    </div>
+
+    <div id="success" style="display:none"></div>
+  </div>
+</main>
+
+<footer id="site-footer"></footer>
+<div id="cart-drawer"></div>
+<div id="search-modal"></div>
+<div id="mobile-nav"></div>
+<div id="toast-root" class="toasts" aria-live="polite"></div>
+
+<script src="assets/js/data.js"></script>
+<script src="assets/js/security.js"></script>
+<script src="assets/js/store.js"></script>
+<script src="assets/js/ui.js"></script>
+<script src="assets/js/email.js"></script>
+<script src="assets/js/checkout.js"></script>
+</body>
+</html>

@@ -1,0 +1,66 @@
+# ZiqWear repository ignores
+# Created by the ops hardening pass - there was no .gitignore before this.
+
+# ---- dependencies & build output -------------------------------------------
+node_modules/
+dist/
+build/
+*.tsbuildinfo
+.vite/
+coverage/
+
+# ---- local secrets & generated env -----------------------------------------
+# backend/.env is created from .env.example on first run of RUN-ZIQWEAR.bat;
+# .env.example at the repo root is the tracked template.
+.env
+.env.local
+.env.*.local
+
+# ---- superseded entry points -------------------------------------------------
+# Old launchers moved aside instead of deleted (this folder is not a git repo).
+/_archive/
+
+# ---- uploads (product media written by the admin at runtime) ----------------
+uploads/
+backend/uploads/
+
+# ---- ops artefacts -----------------------------------------------------------
+# Snapshots and pre-restore copies produced by backend/scripts/backup-db.mjs
+# and restore-db.mjs. They contain the full order history, so they must never
+# be committed. backend/backups/README.md stays tracked (it is not *.db).
+backend/backups/*.db
+backend/backups/*.db-journal
+backend/backups/*.db-wal
+backend/backups/*.db-shm
+
+# CSV dumps from export-orders.csv.mjs / export-products.csv.mjs. orders.csv
+# contains customer PII.
+backend/exports/*.csv
+
+# ---- SQLite scratch / transient ----------------------------------------------
+*.db-journal
+*.db-wal
+*.db-shm
+*.sqlite-journal
+
+# ---- live customer data (PII) -------------------------------------------------
+# The live SQLite store and the static-site order log hold real customer names,
+# emails, phones and addresses. They stay local and must never be pushed; the
+# repo ships schema.prisma + seed.ts so a fresh database can be created instead.
+backend/prisma/*.db
+orders.json
+
+# ---- editor / OS noise -------------------------------------------------------
+.DS_Store
+Thumbs.db
+desktop.ini
+.idea/
+.vscode/
+*.swp
+*.orig
+*.bak
+
+# ---- logs --------------------------------------------------------------------
+*.log
+npm-debug.log*
+logs/

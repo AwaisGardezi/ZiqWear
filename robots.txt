@@ -1,0 +1,36 @@
+# ZiqWear robots.txt
+# The origin below is a placeholder; both servers swap it for the live host.
+#
+# The storefront pages at the repo root are public. The transactional and
+# staff-facing pages are not: checkout, orders and admin hold or expose customer
+# data, and /api is a JSON surface with no reason to be crawled. The React apps
+# are served on separate ports in development (admin on :3001) and under /admin
+# and /dashboard in production; both are disallowed here as well.
+
+User-agent: *
+Disallow: /admin
+Disallow: /admin.html
+Disallow: /admin/
+Disallow: /dashboard
+Disallow: /dashboard/
+Disallow: /checkout
+Disallow: /checkout.html
+Disallow: /orders
+Disallow: /orders.html
+Disallow: /account
+Disallow: /api/
+Disallow: /api
+Disallow: /legacy/
+Disallow: /*?add_to_cart=
+Disallow: /*?variant=
+
+# The 3D wardrobe page is a WebGL experience with a crawlable equivalent on
+# /shop.html, but it is still public and worth indexing for its copy.
+Allow: /wardrobe.html
+
+# Shopify-style cart/preview paths, if the integration is ever enabled.
+User-agent: *
+Disallow: /cart
+Disallow: /collections/*+*
+
+Sitemap: https://ziqwear.com/sitemap.xml

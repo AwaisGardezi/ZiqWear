@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Contact Us — ZIQWEAR</title>
+<meta name="description" content="Contact ZIQWEAR — Zenith in Quality. WhatsApp, email and studio details. Shipping, returns and size guide.">
+<meta property="og:title" content="Contact Us — ZIQWEAR">
+<meta property="og:description" content="Reach ZIQWEAR on WhatsApp or email — order help, shipping, returns and the size guide.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ZIQWEAR">
+<meta property="og:locale" content="en_PK">
+<meta property="og:url" content="https://ziqwear.com/contact.html">
+<meta property="og:image" content="https://ziqwear.com/assets/img/ziq/cat-tees.jpg">
+<meta property="og:image:alt" content="ZIQWEAR graphic streetwear collection">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Contact Us — ZIQWEAR">
+<meta name="twitter:description" content="Reach ZIQWEAR on WhatsApp or email — order help, shipping, returns and the size guide.">
+<meta name="twitter:image" content="https://ziqwear.com/assets/img/ziq/cat-tees.jpg">
+<link rel="canonical" href="https://ziqwear.com/contact.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;500;600;700&family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+<link rel="icon" href="assets/img/favicon.png" type="image/png">
+<link rel="apple-touch-icon" href="assets/img/favicon.png">
+<style>
+  .contact-grid { display:grid; grid-template-columns: 1fr 1fr; gap:64px; padding:20px 0 90px; }
+  .info-block { padding:22px 0; border-bottom:1px solid var(--line-soft); }
+  .info-block:first-child { padding-top:0; }
+  .info-block h4 { font-family:var(--font-ui); font-size:10px; letter-spacing:.18em; text-transform:uppercase; color:var(--muted); margin-bottom:8px; }
+  .info-block p, .info-block a { font-size:15px; }
+  .info-block a:hover { text-decoration:underline; }
+  .faq { border-top:1px solid var(--line-soft); }
+  .faq-item { border-bottom:1px solid var(--line-soft); }
+  .faq-q { display:flex; align-items:center; justify-content:space-between; width:100%; padding:22px 0; text-align:left; font-size:15px; }
+  .faq-q svg { flex:none; transition:transform .3s var(--ease); }
+  .faq-item.is-open .faq-q svg { transform:rotate(45deg); }
+  .faq-a { display:grid; grid-template-rows:0fr; transition:grid-template-rows .35s var(--ease); }
+  .faq-item.is-open .faq-a { grid-template-rows:1fr; }
+  .faq-a > div { overflow:hidden; }
+  .faq-a p { padding-bottom:22px; font-size:14px; line-height:1.75; color:var(--ink-60); max-width:560px; }
+  .send-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .send-row .btn { margin-top:0; }
+  @media (max-width: 520px) { .send-row { grid-template-columns:1fr; } }
+  @media (max-width: 900px) { .contact-grid { grid-template-columns:1fr; gap:40px; } }
+</style>
+</head>
+<body data-page="contact">
+
+<div id="announcement"></div>
+<header id="site-header"></header>
+
+<main>
+  <div class="wrap">
+    <div class="page-head">
+      <nav class="breadcrumb"><a href="index.html">Home</a><span>/</span><span>Contact</span></nav>
+      <h1>Get in touch</h1>
+      <p><b>ZIQWEAR stands for Zenith in Quality.</b> Questions about sizing, an order, or a bulk enquiry — we usually reply within a couple of hours during store hours.</p>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <div class="contact-grid">
+      <div>
+        <div class="info-block"><h4>WhatsApp — fastest</h4><a id="c-wa" href="#" target="_blank" rel="noopener">Message us</a></div>
+        <div class="info-block"><h4>Phone</h4><a id="c-phone" href="#">—</a></div>
+        <div class="info-block"><h4>Email</h4><a id="c-email" href="#">—</a></div>
+        <div class="info-block"><h4>Store</h4><p id="c-address">—</p></div>
+        <div class="info-block"><h4>Hours</h4><p id="c-hours">—</p></div>
+        <div class="info-block"><h4>Follow</h4>
+          <div style="display:flex;gap:14px;margin-top:8px">
+            <a id="c-insta" href="#" target="_blank" rel="noopener">Instagram</a>
+            <a id="c-tiktok" href="#" target="_blank" rel="noopener">TikTok</a>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <h2 style="font-family:var(--font-display);font-size:32px;font-weight:400;margin-bottom:20px">Send a message</h2>
+        <form id="contact-form">
+          <div class="field-row">
+            <div class="field"><label for="cf-name">Name</label><input id="cf-name" required placeholder="Your name"></div>
+            <div class="field"><label for="cf-phone">Phone</label><input id="cf-phone" required placeholder="03xx xxxxxxx"></div>
+          </div>
+          <div class="field"><label for="cf-email">Email</label><input id="cf-email" type="email" placeholder="you@email.com"></div>
+          <div class="field"><label for="cf-topic">Topic</label>
+            <select id="cf-topic"><option>Order enquiry</option><option>Size help</option><option>Exchange or return</option><option>Bulk / wholesale</option><option>Something else</option></select>
+          </div>
+          <div class="field"><label for="cf-msg">Message</label><textarea id="cf-msg" required placeholder="How can we help?"></textarea></div>
+          <div class="send-row">
+            <button class="btn btn--full" type="submit" id="cf-send">Send on WhatsApp</button>
+            <button class="btn btn--ghost btn--full" type="button" id="cf-mail">Send by email</button>
+          </div>
+          <p class="f-help" style="margin-top:10px;font-size:12px;color:var(--muted);line-height:1.6">WhatsApp opens with your message already written. Email opens your mail app with the same text — either way, just hit send.</p>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <section class="section section--cream" id="shipping">
+    <div class="wrap wrap--narrow">
+      <p class="eyebrow">Good to know</p>
+      <h2 style="font-family:var(--font-display);font-size:clamp(30px,4vw,44px);font-weight:400;margin:10px 0 30px">Shipping, returns &amp; sizing</h2>
+      <div class="faq" id="faq"></div>
+    </div>
+  </section>
+</main>
+
+<footer id="site-footer"></footer>
+<div id="cart-drawer"></div>
+<div id="search-modal"></div>
+<div id="mobile-nav"></div>
+<div id="toast-root" class="toasts" aria-live="polite"></div>
+
+<script src="assets/js/data.js"></script>
+<script src="assets/js/security.js"></script>
+<script src="assets/js/store.js"></script>
+<script src="assets/js/ui.js"></script>
+<script src="assets/js/email.js"></script>
+<script src="assets/js/contact.js"></script>
+</body>
+</html>

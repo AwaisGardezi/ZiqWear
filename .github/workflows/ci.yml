@@ -1,0 +1,71 @@
+# NOTE: this workflow only activates once ZiqWear is a git repository (it is not
+# yet) and has been pushed to GitHub; until then it is inert and untested in CI.
+name: CI
+
+on:
+  push:
+    branches: [main, master, develop]
+  pull_request:
+  workflow_dispatch:
+
+# Cancel superseded runs instead of paying for both.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  backend:
+    name: Backend (typecheck + unit tests)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Generates the Prisma client types into node_modules. Reads schema.prisma
+      # only - it does NOT touch a database, so the live ziqwear.db is safe.
+      - name: Generate Prisma client
+        run: npx prisma generate
+
+      # tsconfig.json has rootDir ./src and include ["src/**/*"], so this checks
+      # the application without typechecking tests/.
+      - name: Typecheck
+        run: npx tsc --noEmit
+
+      # `vitest run` (not watch). The suite mocks Prisma and needs no database
+      # and no network.
+      - name: Unit tests
+        run: npm run test:ci
+        env:
+          # Belt and braces: if a future test forgets to mock Prisma it fails to
+          # connect instead of reaching anything resembling production data.
+          DATABASE_URL: file:./ci-nonexistent.db
+
+  static:
+    name: Storefront (SEO + link check)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # Dependency-free lint of the root *.html pages, robots.txt and
+      # sitemap.xml. Fails on a missing <title>, a missing CSP meta tag, a
+      # broken internal link, or a sitemap entry that points at a file that
+      # does not exist. Missing meta description / og tags are warnings only,
+      # so the job stays green while the UI agent is mid-edit; add --strict to
+      # turn them into failures once the copy is final.
+      - name: Static check
+        run: node backend/scripts/check-static.mjs

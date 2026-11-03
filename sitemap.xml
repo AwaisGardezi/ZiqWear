@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  PLACEHOLDER ORIGIN: https://ziqwear.com
+
+  This origin is NOT live yet. Replace every https://ziqwear.com occurrence
+  (here and in robots.txt) with the real production domain at launch, then
+  resubmit the sitemap in Google Search Console / Bing Webmaster Tools.
+
+  Scope: public storefront pages only. checkout.html, orders.html and
+  admin.html are intentionally absent (they are also Disallowed in robots.txt).
+
+  product.html is a single template that renders ?handle=<slug>. Search engines
+  need the individual product URLs, so at launch this file should be generated
+  from the Product table (one <url> per active product handle) rather than
+  maintained by hand - see backend/scripts/export-products.csv.mjs, which already
+  dumps the handle column.
+-->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://ziqwear.com/</loc>
+    <lastmod>2026-11-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://ziqwear.com/index.html</loc>
+    <lastmod>2026-11-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://ziqwear.com/shop.html</loc>
+    <lastmod>2026-11-03</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://ziqwear.com/product.html</loc>
+    <lastmod>2026-11-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://ziqwear.com/wardrobe.html</loc>
+    <lastmod>2026-11-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://ziqwear.com/contact.html</loc>
+    <lastmod>2026-11-03</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+</urlset>

@@ -1,0 +1,169 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* ivory brand palette (mirrors tailwind.config.js) */
+    --paper: #f4efe6;
+    --cream: #ece5d7;
+    --cream-deep: #e4dcc9;
+    --sand: #dcd2bd;
+    --ink: #1b1714;
+    --line: #d7ccb7;
+    --muted: #645a4b;
+    --accent: #86622a;
+    --accent-dark: #6f4f13;
+    --sale: #b3382f;
+    --ok: #3f7d4c;
+    --espresso: #14110e;
+    --espresso-2: #1f1a15;
+    --on-dark: #f6f2ea;
+
+    /* fonts (Instrument Serif / Comfortaa / Inter) */
+    --font-display: 'Instrument Serif', Georgia, serif;
+    --font-ui: 'Comfortaa', system-ui, sans-serif;
+    --font-body: 'Inter', system-ui, sans-serif;
+
+    /* legacy aliases kept so older inline styles keep resolving */
+    --color-bg: #f4efe6;
+    --color-bg-elevated: #ece5d7;
+    --color-border: #d7ccb7;
+    --color-text: #1b1714;
+    --color-text-muted: #645a4b;
+    --color-gold: #86622a;
+    --color-gold-hover: #6f4f13;
+  }
+
+  * {
+    @apply border-line;
+  }
+
+  body {
+    @apply bg-paper text-ink antialiased;
+    font-family: var(--font-body);
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  ::selection {
+    @apply bg-brass text-[#faf7f1];
+  }
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 px-6 py-3 text-sm font-ui font-medium tracking-wide transition-all duration-200 rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-brass focus-visible:ring-offset-2 focus-visible:ring-offset-paper disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  /* brass fill, light label — never a black slab, never light-on-light */
+  .btn-primary {
+    @apply btn bg-brass text-[#faf7f1] hover:bg-brass-dark active:bg-brass-dark;
+  }
+
+  .btn-secondary {
+    @apply btn bg-transparent text-ink border border-line hover:bg-cream active:bg-cream-deep;
+  }
+
+  .btn-outline {
+    @apply btn border border-brass text-brass hover:bg-brass hover:text-[#faf7f1] active:bg-brass-dark;
+  }
+
+  .btn-ghost {
+    @apply btn text-ink hover:bg-cream active:bg-cream-deep;
+  }
+
+  .input {
+    @apply w-full px-4 py-3 bg-cream border border-line text-ink placeholder:text-muted rounded-lg transition-colors duration-200 focus:outline-none focus:border-brass focus:ring-1 focus:ring-brass disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .label {
+    @apply block text-sm font-medium mb-1.5;
+    color: var(--muted);
+  }
+
+  .card {
+    @apply bg-cream border border-line rounded-lg overflow-hidden transition-all duration-300 hover:border-brass/50;
+  }
+
+  .container {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  .section {
+    @apply py-16 sm:py-24 lg:py-32;
+  }
+
+  .heading-1 {
+    @apply font-display text-4xl sm:text-5xl lg:text-6xl font-medium tracking-tight text-ink;
+  }
+
+  .heading-2 {
+    @apply font-display text-3xl sm:text-4xl font-medium tracking-tight text-ink;
+  }
+
+  .heading-3 {
+    @apply font-display text-2xl sm:text-3xl font-medium tracking-tight text-ink;
+  }
+
+  .text-body {
+    @apply text-base leading-relaxed;
+    color: var(--muted);
+  }
+
+  /* the `text-muted` colour utility lives in the utilities layer; this component
+     class only adds the size, so it must not @apply its own name (cycle). */
+  .text-muted {
+    @apply text-sm;
+    color: var(--muted);
+  }
+
+  .link {
+    @apply text-brass hover:text-brass-dark transition-colors duration-200 underline underline-offset-2;
+  }
+
+  /* status badges — light tints with AA-safe ink labels (never the -300/-400 ramp) */
+  .badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+  }
+
+  .badge-success {
+    @apply badge bg-ok/10 text-[#2f5f39];
+  }
+
+  .badge-warning {
+    @apply badge bg-brass/10 text-brass-800;
+  }
+
+  .badge-danger {
+    @apply badge bg-sale/10 text-[#8f2b24];
+  }
+
+  .badge-info {
+    @apply badge bg-cream-deep;
+    color: var(--muted);
+  }
+
+  .badge-gold {
+    @apply badge bg-brass/10 text-brass-800;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .animate-in {
+    animation: fadeIn 0.5s ease-out forwards;
+  }
+
+  .stagger-1 { animation-delay: 0.1s; }
+  .stagger-2 { animation-delay: 0.2s; }
+  .stagger-3 { animation-delay: 0.3s; }
+  .stagger-4 { animation-delay: 0.4s; }
+  .stagger-5 { animation-delay: 0.5s; }
+}
