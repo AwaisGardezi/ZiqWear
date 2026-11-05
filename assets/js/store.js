@@ -107,28 +107,29 @@
         this.persist();
       }
 
-      // One-off: move the stored palette from the dark identity to the ivory
-      // boutique theme. The logo is untouched — it always sits on dark chrome,
-      // which style.css handles per surface.
+      // One-off: the palette moves from the ivory boutique theme to white and
+      // black. Only colours from the old warm palette are replaced, so a colour
+      // the owner picked by hand survives. The logo is untouched — it always
+      // sits on dark chrome, which style.css handles per surface.
+      var warmHex = ["#1b1714", "#14110e", "#1f1a15", "#262019", "#2a231b", "#332b22", "#3b3222",
+        "#4a3c26", "#645a4b", "#6d5c3c", "#6f4f13", "#7d5a17", "#86622a", "#a8813c", "#c9a24b",
+        "#d9b878", "#f0dcb4", "#e4dcc9", "#e5dcc9", "#ece5d7", "#f4efe6", "#eae1d3", "#dcd2bd",
+        "#d7ccb7", "#dcd2c1", "#e7dfd1", "#e9e0d2", "#dcd0bd", "#e3d3c8", "#d5c1b3", "#e6dbc4",
+        "#d8cab0", "#dbe0d3", "#cad1c0", "#f6f2ea", "#f5f0e9", "#faf7f1"];
+      var isWarm = function (v) { return warmHex.indexOf(String(v || "").toLowerCase()) >= 0; };
+      var monoTheme = { ink: "#111111", cream: "#f6f6f6", accent: "#111111", sale: "#b3382f" };
       if (s.theme) {
         var t = s.theme;
-        var ivoryTheme = { ink: "#1b1714", cream: "#ece5d7", accent: "#86622a", sale: "#b3382f" };
-        var onDarkInk = ["#ffffff", "#fff", "#f6f2ea", "#f5f0e9"];
-        var onDarkCream = ["#111111", "#0b0b0a", "#000000", "#1a1a1a", "#222222", "#333333"];
-        var offAccent = ["#ffffff", "#fff", "#c9a24b", "#6b2bd6", "#f2f2f2", "#a8813c"];
-        var needsThemeUpdate = !t.ink || !t.cream || !t.accent ||
-          onDarkInk.indexOf(String(t.ink).toLowerCase()) >= 0 ||
-          onDarkCream.indexOf(String(t.cream).toLowerCase()) >= 0 ||
-          offAccent.indexOf(String(t.accent).toLowerCase()) >= 0;
-        if (needsThemeUpdate) {
-          s.theme = ivoryTheme;
+        if (!t.ink || !t.cream || !t.accent || isWarm(t.ink) || isWarm(t.cream) || isWarm(t.accent)) {
+          s.theme = Object.assign({}, t, monoTheme);
           this.persist();
         }
       }
 
-      // One-off: the hero stages used saturated brand colours; the boutique
-      // theme wants muted ivory tints. Only stored slides still on the old
-      // palette are replaced, so slides the owner edited survive.
+      // One-off: the hero stages used saturated brand colours; the old boutique
+      // theme turned them into ivory tints. Both eras come back as white and
+      // black — saturated or missing stages re-seed, warm ones are recoloured in
+      // place so any copy or picture the owner put on a slide stays put.
       if (global.SEED_DATA && global.SEED_DATA.settings && global.SEED_DATA.settings.heroSlides) {
         var seedSlides = global.SEED_DATA.settings.heroSlides;
         var oldStageColors = ["#6b2bd6", "#d6214e", "#f0621e", "#2dbe4e", "#111111", "#333333", "#444444", "#000000", "#1a1a1a", "#222222", "#ffffff"];
@@ -138,13 +139,24 @@
           var bg = sl && sl.theme ? String(sl.theme.bg || "").toLowerCase() : "";
           if (!bg || oldStageColors.indexOf(bg) >= 0) needsHeroUpdate = true;
         });
-        if (needsHeroUpdate) {
-          s.heroSlides = clone(seedSlides);
-          this.persist();
-        }
+        if (needsHeroUpdate) s.heroSlides = clone(seedSlides);
+
+        var recoloured = false;
+        (s.heroSlides || []).forEach(function (sl, i) {
+          var th = sl && sl.theme;
+          if (!th) return;
+          var seed = seedSlides[i] && seedSlides[i].theme;
+          ["bg", "bg2", "word", "ink", "accent"].forEach(function (k) {
+            if (!isWarm(th[k])) return;
+            th[k] = (seed && seed[k]) || (k === "bg" || k === "bg2" ? "#f0f0f0" : "#111111");
+            recoloured = true;
+          });
+        });
+        if (needsHeroUpdate || recoloured) this.persist();
       }
 
       this.syncSeed();
+      this.backfillPageSections();
       this.applyTheme();
       this.flushPending();
       return this;
@@ -185,6 +197,27 @@
       this.db.settings = s;
       this.db.version = sv;
       this.persist();
+    },
+
+    /* The page sections (Key features, Material, Performance, Style) are new
+       fields, so a browser that stored the catalogue before they existed has
+       products without them. A version bump would overwrite them the moment the
+       owner edits one, so this only ever fills keys that are truly absent. */
+    backfillPageSections: function () {
+      var seed = global.SEED_DATA;
+      if (!seed || !seed.products) return;
+      var byId = {};
+      seed.products.forEach(function (sp) { byId[sp.id] = sp; });
+      var KEYS = ["features", "material", "performance", "style"];
+      var changed = false;
+      (this.db.products || []).forEach(function (p) {
+        var sp = byId[p.id];
+        if (!sp) return;
+        KEYS.forEach(function (k) {
+          if (p[k] === undefined && sp[k] !== undefined) { p[k] = clone(sp[k]); changed = true; }
+        });
+      });
+      if (changed) this.persist();
     },
 
     persist: function () {

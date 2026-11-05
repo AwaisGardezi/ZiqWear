@@ -65,7 +65,7 @@ jobs:
       # sitemap.xml. Fails on a missing <title>, a missing CSP meta tag, a
       # broken internal link, or a sitemap entry that points at a file that
       # does not exist. Missing meta description / og tags are warnings only,
-      # so the job stays green while the UI agent is mid-edit; add --strict to
+      # so the job stays green while the UI is mid-edit; add --strict to
       # turn them into failures once the copy is final.
       - name: Static check
         run: node backend/scripts/check-static.mjs

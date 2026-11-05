@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { prisma } from '../../lib/prisma';
 import { AppError } from '../../utils/AppError';
 import { jsonField } from '../../utils/json';
-import { contentUpload, contentImageUrl } from '../../lib/upload';
+import { contentMediaUpload, contentMediaUrl } from '../../lib/upload';
 import { AuthenticatedRequest, adminAuthMiddleware, requirePermission } from '../../middleware/auth';
 
 export const adminCmsRoutes = Router();
@@ -42,21 +42,23 @@ adminCmsRoutes.get('/', requirePermission('cms:read'), async (req: Authenticated
 });
 
 /**
- * Publish an image the admin picked — the founder's own photo, a campaign shot —
- * and hand back the public URL to store in a content block. The file lands in the
- * uploads/content folder only, so it can never expose a payment proof.
+ * Publish a picture or clip the admin picked — the founder's own photo, a
+ * campaign shot, a fabric close-up — and hand back the public URL to store on a
+ * product or content block. The file lands in the uploads/content folder only,
+ * so it can never expose a payment proof.
  */
 adminCmsRoutes.post(
   '/upload',
   requirePermission('cms:create', 'cms:update'),
-  (req, res, next) => contentUpload(req, res, (err: unknown) => (err ? next(err) : next())),
+  (req, res, next) => contentMediaUpload(req, res, (err: unknown) => (err ? next(err) : next())),
   async (req: any, res) => {
     if (!req.file) {
-      throw new AppError('Choose an image file to upload', 400, 'IMAGE_REQUIRED');
+      throw new AppError('Choose an image or video file to upload', 400, 'FILE_REQUIRED');
     }
     res.status(201).json({
       filename: req.file.filename as string,
-      url: contentImageUrl(req.file.filename as string),
+      url: contentMediaUrl(req.file.filename as string),
+      type: String(req.file.mimetype).startsWith('video/') ? 'video' : 'image',
     });
   }
 );

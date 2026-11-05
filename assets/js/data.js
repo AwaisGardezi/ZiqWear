@@ -22,9 +22,9 @@ window.SEED_DATA = {
   ],
   "marquee": "WEAR YOUR IDENTITY  ·  ZENITH IN QUALITY",
   "theme": {
-   "ink": "#1b1714",
-   "cream": "#ece5d7",
-   "accent": "#86622a",
+   "ink": "#111111",
+   "cream": "#f6f6f6",
+   "accent": "#111111",
    "sale": "#b3382f"
   },
   "heroSlides": [
@@ -41,11 +41,11 @@ window.SEED_DATA = {
     "image": "assets/img/ziq/cut-freedom.png",
     "product": "p001",
     "theme": {
-     "bg": "#e9e0d2",
-     "bg2": "#dcd0bd",
-     "word": "#1b1714",
-     "ink": "#1b1714",
-     "accent": "#86622a"
+     "bg": "#f4f4f4",
+     "bg2": "#e6e6e6",
+     "word": "#111111",
+     "ink": "#111111",
+     "accent": "#111111"
     }
    },
    {
@@ -61,11 +61,11 @@ window.SEED_DATA = {
     "image": "assets/img/ziq/cut-vanguard.png",
     "product": "p002",
     "theme": {
-     "bg": "#e3d3c8",
-     "bg2": "#d5c1b3",
-     "word": "#1b1714",
-     "ink": "#1b1714",
-     "accent": "#86622a"
+     "bg": "#ededed",
+     "bg2": "#dcdcdc",
+     "word": "#111111",
+     "ink": "#111111",
+     "accent": "#111111"
     }
    },
    {
@@ -81,11 +81,11 @@ window.SEED_DATA = {
     "image": "assets/img/ziq/cut-dark.png",
     "product": "p005",
     "theme": {
-     "bg": "#e6dbc4",
-     "bg2": "#d8cab0",
-     "word": "#1b1714",
-     "ink": "#1b1714",
-     "accent": "#86622a"
+     "bg": "#f6f6f6",
+     "bg2": "#eaeaea",
+     "word": "#111111",
+     "ink": "#111111",
+     "accent": "#111111"
     }
    },
    {
@@ -101,11 +101,11 @@ window.SEED_DATA = {
     "image": "assets/img/ziq/cut-foundation.png",
     "product": "p006",
     "theme": {
-     "bg": "#dbe0d3",
-     "bg2": "#cad1c0",
-     "word": "#1b1714",
-     "ink": "#1b1714",
-     "accent": "#86622a"
+     "bg": "#e4e4e4",
+     "bg2": "#d4d4d4",
+     "word": "#111111",
+     "ink": "#111111",
+     "accent": "#111111"
     }
    }
   ],
@@ -323,7 +323,66 @@ window.SEED_DATA = {
    "sold": 312,
    "active": true,
    "createdAt": 1791400000000,
-   "discount": 29
+   "discount": 29,
+   "features": [
+    {
+     "title": "240 GSM combed cotton",
+     "text": "A weight heavy enough to hold its shape through a season, combed so the face of the fabric stays smooth against the print.",
+     "images": [
+      "assets/img/ziq/freedom-2.jpg",
+      "assets/img/ziq/freedom-3.jpg"
+     ],
+     "fit": "contain"
+    },
+    {
+     "title": "Water-based print",
+     "text": "The ink sinks into the fibres instead of sitting on top of them, so the graphic softens with the shirt rather than cracking across it.",
+     "images": [
+      "assets/img/ziq/freedom-1.jpg"
+     ],
+     "fit": "cover"
+    },
+    {
+     "title": "Drop-shoulder oversized cut",
+     "text": "The seam falls past the shoulder and the body runs straight, which is why it hangs the same on every frame. Size down one step for a regular fit.",
+     "images": [
+      "assets/img/ziq/cut-freedom.png"
+     ],
+     "fit": "contain"
+    }
+   ],
+   "material": {
+    "title": "The cloth",
+    "intro": "One fabric, chosen for how it behaves after a wash rather than how it looks on the roll: combed cotton, knitted tight, finished so the seams stay flat.",
+    "image": "assets/img/ziq/freedom-2.jpg",
+    "notes": [
+     { "text": "Twice-combed fibres — the surface stays smooth instead of pilling", "x": 30, "y": 26 },
+     { "text": "Twin-needle hem, 22 mm, so it hangs straight", "x": 56, "y": 78 },
+     { "text": "Ribbed collar on a 1x1 knit — it opens and closes without stretching out", "x": 50, "y": 12 }
+    ],
+    "specs": [
+     { "label": "Fabric weight", "value": "240 GSM" },
+     { "label": "Composition", "value": "100% combed cotton" },
+     { "label": "Knit", "value": "Single jersey" },
+     { "label": "Finish", "value": "Pre-shrunk, silicone softener" },
+     { "label": "Print", "value": "Water-based screen print" }
+    ]
+   },
+   "performance": [
+    { "value": "240", "label": "GSM combed cotton", "note": "Heavy enough to wear through a season without going limp." },
+    { "value": "5", "label": "Wash cycles tested", "note": "Print measured after five cold washes inside out." },
+    { "value": "<3%", "label": "Shrink after the first wash", "note": "Pre-shrunk at the mill, so the size you buy is the size you keep." },
+    { "value": "1x1", "label": "Rib knit on the collar", "note": "Recovery knit — it opens to go over your head and closes back." }
+   ],
+   "style": {
+    "title": "How it gets worn",
+    "intro": "It reads cleanest under something open — a shirt worn unbuttoned over it, or a heavy set of cargo below so the oversized body has somewhere to land.",
+    "video": "",
+    "products": [
+     "p002",
+     "p004"
+    ]
+   }
   },
   {
    "id": "p002",

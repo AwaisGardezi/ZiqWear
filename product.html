@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob:; media-src 'self' blob: data:; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Product — ZIQWEAR</title>
@@ -20,7 +20,7 @@
 <meta name="twitter:image" content="https://ziqwear.com/assets/img/ziq/cat-tees.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;500;600;700&family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/style.css">
 <link rel="icon" href="assets/img/favicon.png" type="image/png">
 <link rel="apple-touch-icon" href="assets/img/favicon.png">
@@ -37,6 +37,14 @@
   <div class="wrap">
     <div class="pdp" id="pdp"></div>
   </div>
+
+  <!-- Owner-built sections: product.js fills these from the product page editor
+       in /admin.html. An empty host renders nothing at all. -->
+  <div id="pdp-features"></div>
+  <div id="pdp-material"></div>
+  <div id="pdp-performance"></div>
+  <div id="pdp-style"></div>
+
   <section class="section section--cream" id="related"></section>
 </main>
 
@@ -51,19 +59,19 @@
 </div>
 <div id="size-modal" style="position:fixed;inset:0;z-index:150;background:rgba(11,11,10,.5);display:none;place-items:center;padding:20px">
   <div style="background:var(--paper);border:1px solid var(--line);box-shadow:var(--shadow-lg);max-width:520px;width:100%;padding:28px;position:relative">
-    <button id="size-close" style="position:absolute;top:12px;right:14px;width:32px;height:32px;border:1px solid var(--line);border-radius:50%;background:transparent;color:var(--ink);font-size:12px;cursor:pointer" aria-label="Close">✕</button>
-    <h3 style="font-family:var(--font-display);font-size:26px;margin-bottom:6px">Size Guide</h3>
-    <p style="font-size:12.5px;color:var(--muted);margin-bottom:18px">Measurements in inches. Garment measured flat.</p>
-    <table style="width:100%;border-collapse:collapse;font-size:13px">
+    <button id="size-close" style="position:absolute;top:12px;right:14px;width:32px;height:32px;border:1px solid var(--line);border-radius:50%;background:transparent;color:var(--ink);font-size:var(--fs-meta);cursor:pointer" aria-label="Close">✕</button>
+    <h3 style="font-family:var(--font-display);font-size:var(--fs-h1);margin-bottom:6px">Size Guide</h3>
+    <p style="font-size:var(--fs-meta);color:var(--muted);margin-bottom:18px">Measurements in inches. Garment measured flat.</p>
+    <table style="width:100%;border-collapse:collapse;font-size:var(--fs-sm)">
       <thead><tr style="text-align:left;border-bottom:1px solid var(--line)">
-        <th style="padding:8px 0;font-family:var(--font-ui);font-size:10px;letter-spacing:.1em;text-transform:uppercase">Size</th>
-        <th style="padding:8px 0;font-family:var(--font-ui);font-size:10px;letter-spacing:.1em;text-transform:uppercase">Chest</th>
-        <th style="padding:8px 0;font-family:var(--font-ui);font-size:10px;letter-spacing:.1em;text-transform:uppercase">Length</th>
-        <th style="padding:8px 0;font-family:var(--font-ui);font-size:10px;letter-spacing:.1em;text-transform:uppercase">Sleeve</th>
+        <th style="padding:8px 0;font-family:var(--font-ui);font-size:var(--fs-tag);letter-spacing:var(--ls-caps);text-transform:uppercase">Size</th>
+        <th style="padding:8px 0;font-family:var(--font-ui);font-size:var(--fs-tag);letter-spacing:var(--ls-caps);text-transform:uppercase">Chest</th>
+        <th style="padding:8px 0;font-family:var(--font-ui);font-size:var(--fs-tag);letter-spacing:var(--ls-caps);text-transform:uppercase">Length</th>
+        <th style="padding:8px 0;font-family:var(--font-ui);font-size:var(--fs-tag);letter-spacing:var(--ls-caps);text-transform:uppercase">Sleeve</th>
       </tr></thead>
       <tbody id="size-table"></tbody>
     </table>
-    <p style="font-size:12px;color:var(--muted);margin-top:16px">Between sizes? Size up for a relaxed fit — most of our tops are cut boxy.</p>
+    <p style="font-size:var(--fs-meta);color:var(--muted);margin-top:16px">Between sizes? Size up for a relaxed fit — most of our tops are cut boxy.</p>
   </div>
 </div>
 <div id="toast-root" class="toasts" aria-live="polite"></div>
@@ -71,6 +79,7 @@
 <script src="assets/js/data.js"></script>
 <script src="assets/js/security.js"></script>
 <script src="assets/js/store.js"></script>
+<script src="assets/js/media.js"></script>
 <script src="assets/js/ui.js"></script>
 <script src="assets/js/product.js"></script>
 </body>

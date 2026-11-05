@@ -50,6 +50,13 @@ backend/exports/*.csv
 backend/prisma/*.db
 orders.json
 
+# ---- local debugging scratch -------------------------------------------------
+# PDP smoke/guard scripts and the sample clip used while testing product media
+# uploads. They talk to a localhost dev server with a throwaway test account.
+backend/pdp-guard*.cjs
+backend/pdp-smoke.mjs
+backend/clip-test.mp4
+
 # ---- editor / OS noise -------------------------------------------------------
 .DS_Store
 Thumbs.db

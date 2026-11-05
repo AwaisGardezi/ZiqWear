@@ -5,12 +5,13 @@ import multer from 'multer';
 import { config } from '../config';
 
 /**
- * Image uploads.
+ * Uploads.
  *
- * Reuses `config.upload` (dir `./uploads`, 10 MB limit, image mime list).
+ * Reuses `config.upload` (dir `./uploads`, 10 MB limit) — that limit is what
+ * caps a product clip, so keep videos short or raise it in the environment.
  * Payment proofs land in UPLOAD_ROOT itself and are only ever read back through
  * the authenticated `/api/v1/payments/proof/:paymentId` route; storefront
- * content images land in the `content/` subdirectory and are public.
+ * content images and clips land in the `content/` subdirectory and are public.
  */
 export const UPLOAD_ROOT = path.resolve(config.upload.uploadDir);
 
@@ -48,7 +49,7 @@ export const proofUpload = multer({
 }).single('file');
 
 /**
- * Images the admin publishes as storefront content.
+ * Images and clips the admin publishes as storefront content.
  *
  * These are world-readable, so they live in their own subdirectory: the public
  * read route can only ever see this folder and never the payment proofs that
@@ -57,13 +58,17 @@ export const proofUpload = multer({
 export const CONTENT_UPLOAD_ROOT = path.join(UPLOAD_ROOT, 'content');
 
 // Extension chosen from the mime type multer sniffed, so a stored file can never
-// be served as something other than the image it actually is.
+// be served as something other than what it actually is.
 const CONTENT_EXTENSIONS: Record<string, string> = {
   'image/jpeg': '.jpg',
   'image/png': '.png',
   'image/webp': '.webp',
   'image/avif': '.avif',
+  'video/mp4': '.mp4',
+  'video/webm': '.webm',
 };
+
+const MEDIA_MIMES = Object.keys(CONTENT_EXTENSIONS);
 
 try {
   fs.mkdirSync(CONTENT_UPLOAD_ROOT, { recursive: true });
@@ -83,13 +88,21 @@ const contentStorage = multer.diskStorage({
   },
 });
 
-export const contentUpload = multer({
+const mediaFileFilter: multer.Options['fileFilter'] = (_req, file, cb) => {
+  if (MEDIA_MIMES.includes(file.mimetype)) {
+    cb(null, true);
+  } else {
+    cb(new multer.MulterError('LIMIT_UNEXPECTED_FILE', 'file'));
+  }
+};
+
+export const contentMediaUpload = multer({
   storage: contentStorage,
-  fileFilter,
+  fileFilter: mediaFileFilter,
   limits: { fileSize: config.upload.maxFileSize, files: 1 },
 }).single('file');
 
-/** The public path a stored content image is read back from. */
-export const contentImageUrl = (filename: string): string => `/api/v1/cms/image/${filename}`;
+/** The public path a stored content image or clip is read back from. */
+export const contentMediaUrl = (filename: string): string => `/api/v1/cms/media/${filename}`;
 
 export default proofUpload;

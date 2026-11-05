@@ -43,7 +43,7 @@
         '<input type="radio" name="pay" value="' + m.id + '"' + (chosen.payment === m.id ? " checked" : "") + '>' +
         '<span class="radio-card__dot"></span>' +
         '<span class="radio-card__t"><b>' + esc(m.name) + '</b><span>' + esc(m.desc) + '</span></span>' +
-        (m.tag ? '<span class="radio-card__price" style="font-size:10px;letter-spacing:.08em;text-transform:uppercase">' + esc(m.tag) + '</span>' : '') +
+        (m.tag ? '<span class="radio-card__price" style="font-size:var(--fs-tag);letter-spacing:var(--ls-wide);text-transform:uppercase">' + esc(m.tag) + '</span>' : '') +
         '</label>';
     }).join("");
 
@@ -75,7 +75,7 @@
     var t = totals();
 
     if (!items.length) {
-      host.innerHTML = '<h2>Order summary</h2><p style="font-size:13px;color:var(--muted)">Your bag is empty.</p>' +
+      host.innerHTML = '<h2>Order summary</h2><p style="font-size:var(--fs-sm);color:var(--muted)">Your bag is empty.</p>' +
         '<a class="btn btn--ghost btn--full" style="margin-top:16px" href="shop.html">Continue shopping</a>';
       qs("#place-order").disabled = true;
       return;
@@ -288,8 +288,8 @@
     host.innerHTML = '<div style="max-width:640px;margin:20px auto 90px;text-align:center">' +
       '<div style="width:64px;height:64px;border-radius:50%;background:var(--ink);color:#fff;display:grid;place-items:center;margin:0 auto 24px">' + I.check + '</div>' +
       '<p class="eyebrow">Order confirmed</p>' +
-      '<h2 style="font-family:var(--font-display);font-size:clamp(32px,5vw,52px);font-weight:400;margin:10px 0 14px">Thank you, ' + esc(order.customer.name.split(" ")[0]) + '.</h2>' +
-      '<p style="color:var(--muted);font-size:14px;max-width:440px;margin:0 auto">Your order <b style="color:var(--ink)">' + esc(order.id) + '</b> is in. We will confirm it on WhatsApp within a few hours.</p>' +
+      '<h2 style="font-size:var(--fs-page);font-weight:var(--fw-bold);margin:10px 0 14px">Thank you, ' + esc(order.customer.name.split(" ")[0]) + '.</h2>' +
+      '<p style="color:var(--muted);font-size:var(--fs-body);max-width:440px;margin:0 auto">Your order <b style="color:var(--ink)">' + esc(order.id) + '</b> is in. We will confirm it on WhatsApp within a few hours.</p>' +
       '<div style="border:1px solid var(--line);padding:24px;margin:32px 0;text-align:left">' +
         order.items.map(function (i) {
           return '<div class="sitem"><img src="' + esc(i.image) + '" alt="">' +
@@ -298,13 +298,13 @@
         }).join("") +
         '<div class="cart-line" style="margin-top:12px"><span>Delivery</span><span>' + (order.shipping ? UI.money(order.shipping) : "Free") + '</span></div>' +
         '<div class="cart-line cart-line--total"><span>Total</span><span>' + UI.money(order.total) + '</span></div>' +
-        '<p style="font-size:12px;color:var(--muted);margin-top:14px">Delivering to ' + esc(order.customer.address) + ', ' + esc(order.customer.city) + '</p>' +
+        '<p style="font-size:var(--fs-meta);color:var(--muted);margin-top:14px">Delivering to ' + esc(order.customer.address) + ', ' + esc(order.customer.city) + '</p>' +
       '</div>' +
       '<div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">' +
         '<a class="btn" href="' + esc(wa) + '" target="_blank" rel="noopener noreferrer">Confirm on WhatsApp</a>' +
         '<a class="btn btn--ghost" href="orders.html?phone=' + encodeURIComponent(order.customer.phone) + '">Track order</a>' +
       '</div>' +
-      '<p style="margin-top:26px"><a href="shop.html" style="font-size:12px;text-decoration:underline;color:var(--muted)">Continue shopping</a></p>' +
+      '<p style="margin-top:26px"><a href="shop.html" style="font-size:var(--fs-meta);text-decoration:underline;color:var(--muted)">Continue shopping</a></p>' +
     '</div>';
     window.scrollTo({ top: 0, behavior: "smooth" });
     UI.syncCounts();

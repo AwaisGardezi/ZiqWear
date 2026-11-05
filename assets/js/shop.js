@@ -146,7 +146,7 @@
         html += '<div style="padding-left:16px">' + c.children.map(function (k) {
           var kn = pool.filter(function (p) { return p.subcategory === k.sub; }).length;
           return '<label class="check"><input type="radio" name="sub" value="' + esc(k.sub) + '"' + (state.sub === k.sub ? " checked" : "") + '>' +
-            '<span class="check__box">' + I.check + '</span><span style="font-size:12.5px">' + esc(k.name) + '</span>' +
+            '<span class="check__box">' + I.check + '</span><span style="font-size:var(--fs-meta)">' + esc(k.name) + '</span>' +
             '<span class="check__count">' + kn + '</span></label>';
         }).join("") + '</div>';
       }
@@ -159,13 +159,13 @@
       ? '<div class="size-grid">' + sizes.map(function (s) {
         return '<button class="size-chip' + (state.sizes.indexOf(s.value) > -1 ? " is-on" : "") + '" data-size="' + esc(s.value) + '">' + esc(s.value) + '</button>';
       }).join("") + '</div>'
-      : '<p style="font-size:12px;color:var(--muted)">No size options here.</p>';
+      : '<p style="font-size:var(--fs-meta);color:var(--muted)">No size options here.</p>';
 
     var colorBody = colors.length
       ? '<div class="color-grid">' + colors.slice(0, 18).map(function (c) {
         return '<button class="color-chip' + (state.colors.indexOf(c.value) > -1 ? " is-on" : "") + '" data-color="' + esc(c.value) + '" title="' + esc(c.value) + '" style="background:' + UI.colorHex(c.value) + '"></button>';
       }).join("") + '</div>'
-      : '<p style="font-size:12px;color:var(--muted)">No colour options here.</p>';
+      : '<p style="font-size:var(--fs-meta);color:var(--muted)">No colour options here.</p>';
 
     var priceBody = '<div class="price-inputs">' +
       '<input type="number" placeholder="' + lo + '" id="price-min" value="' + (state.min != null ? state.min : "") + '">' +
@@ -309,7 +309,7 @@
     var wrap = qs("#load-more-wrap");
     wrap.innerHTML = shown.length < filtered.length
       ? '<button class="btn btn--ghost" id="load-more">Load more (' + (filtered.length - shown.length) + ')</button>'
-      : (filtered.length > PER_PAGE ? '<p style="font-size:12px;color:var(--muted)">You have seen everything.</p>' : "");
+      : (filtered.length > PER_PAGE ? '<p style="font-size:var(--fs-meta);color:var(--muted)">You have seen everything.</p>' : "");
     var lm = qs("#load-more");
     if (lm) lm.addEventListener("click", function () {
       state.page++;

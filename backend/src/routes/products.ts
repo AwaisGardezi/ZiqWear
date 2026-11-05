@@ -142,22 +142,34 @@ productRoutes.get('/:id/stock', async (req, res) => {
 
 productRoutes.get('/:handle', optionalAuth, async (req: AuthenticatedRequest, res) => {
   const { handle } = req.params;
-  
-  const product = await prisma.product.findUnique({
-    where: { handle, isActive: true },
-    include: {
-      images: { orderBy: { position: 'asc' } },
-      variants: { where: { isActive: true }, include: { inventory: true, images: { orderBy: { position: 'asc' } } }, orderBy: { position: 'asc' } },
-      category: true,
-      collections: { include: { collection: true } },
-      sizeChart: true,
-      reviews: { where: { isApproved: true, isHidden: false }, include: { customer: { select: { firstName: true, lastName: true } } }, orderBy: { createdAt: 'desc' }, take: 10 },
-    },
-  });
-  
+
+  const [product, pageContent] = await Promise.all([
+    prisma.product.findUnique({
+      where: { handle, isActive: true },
+      include: {
+        images: { orderBy: { position: 'asc' } },
+        variants: { where: { isActive: true }, include: { inventory: true, images: { orderBy: { position: 'asc' } } }, orderBy: { position: 'asc' } },
+        category: true,
+        collections: { include: { collection: true } },
+        sizeChart: true,
+        reviews: { where: { isApproved: true, isHidden: false }, include: { customer: { select: { firstName: true, lastName: true } } }, orderBy: { createdAt: 'desc' }, take: 10 },
+      },
+    }),
+    // Per-product page copy (subtitle, fit notes, model, accordion sections) lives
+    // in the CMS table, so the product model itself never needs a new column.
+    prisma.cmsContent.findFirst({
+      where: {
+        key: `product-page:${handle}`,
+        isActive: true,
+        OR: [{ publishAt: null }, { publishAt: { lte: new Date() } }],
+      },
+      select: { content: true },
+    }),
+  ]);
+
   if (!product) throw new AppError('Product not found', 404, 'NOT_FOUND');
-  
-  res.json({ product });
+
+  res.json({ product: { ...product, page: pageContent?.content ?? null } });
 });
 
 productRoutes.get('/meta/filters', async (_req, res) => {

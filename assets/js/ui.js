@@ -121,6 +121,33 @@
 
     money: function (n) { return S.money(n); },
 
+    /* Pictures the shop keeps live inside one localStorage key, so anything he
+       uploads is shrunk before it is stored — a phone photo would otherwise eat
+       the whole quota. Calls back with a data URL, or null if the file fails. */
+    shrinkImage: function (file, cb, max) {
+      var reader = new FileReader();
+      reader.onerror = function () { cb(null); };
+      reader.onload = function (e) {
+        var img = new Image();
+        img.onerror = function () { cb(null); };
+        img.onload = function () {
+          var cap = max || 900;
+          var w = img.width, h = img.height;
+          if (Math.max(w, h) > cap) {
+            var r = cap / Math.max(w, h);
+            w = Math.round(w * r); h = Math.round(h * r);
+          }
+          var c = document.createElement("canvas");
+          c.width = w; c.height = h;
+          c.getContext("2d").drawImage(img, 0, 0, w, h);
+          // PNG keeps the transparency a garment cutout needs; photos stay JPEG.
+          cb(c.toDataURL(/png/i.test(file.type) ? "image/png" : "image/jpeg", 0.82));
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    },
+
     /* ----- WhatsApp ----- */
     waNumber: function () {
       return String((S.settings && S.settings.whatsapp) || "").replace(/\D/g, "");
@@ -350,7 +377,6 @@
         '</div></div>' +
         '<div class="wrap"><div class="footer__bottom">' +
           '<span>© ' + new Date().getFullYear() + ' ' + esc(s.storeName) + '. All rights reserved.</span>' +
-          '<div class="footer__pay"><span>CASH ON DELIVERY</span><span>BANK TRANSFER</span><span>EASYPAISA</span><span>JAZZCASH</span><span>VISA</span></div>' +
         '</div></div>';
     },
 
@@ -412,6 +438,8 @@
       host.innerHTML =
         '<div class="drawer__scrim" data-close-cart></div>' +
         '<aside class="drawer__panel" role="dialog" aria-label="Shopping bag">' +
+          '<div class="drawer__bg" aria-hidden="true"><img alt="" data-drawer-bg></div>' +
+          '<div class="drawer__veil" aria-hidden="true"></div>' +
           '<div class="drawer__head"><h3 data-cart-title>Bag (0)</h3>' +
             '<button class="icon-btn" data-close-cart aria-label="Close">' + I.close + '</button></div>' +
           '<div data-shipbar></div>' +
@@ -422,6 +450,57 @@
         b.addEventListener("click", function () { UI.closeCart(); });
       });
       this.paintCart();
+    },
+
+    /* The picture of whichever line you are looking at, behind the whole bag. */
+    setDrawerBg: function (url) {
+      var img = qs("[data-drawer-bg]");
+      var panel = qs(".drawer__panel");
+      if (!img || !panel) return;
+      if (!url) {
+        panel.classList.remove("has-bg");
+        img.removeAttribute("src");
+        img.dataset.src = "";
+        return;
+      }
+      if (img.dataset.src === url) {
+        if (!img.getAttribute("src")) img.src = url;
+        panel.classList.add("has-bg");
+        return;
+      }
+      var alreadyShown = panel.classList.contains("has-bg");
+      img.dataset.src = url;
+      img.onload = function () { panel.classList.add("has-bg"); };
+      img.src = url;
+      /* a picture the browser already has cuts straight to the next one; fading
+         out first would show the incoming product twice */
+      if (alreadyShown && img.complete && img.naturalWidth) img.onload();
+    },
+
+    /* Lines are the switch: the first one leads, and the one you touch takes over.
+       Painting a new bag keeps the picture you were looking at, so tapping "+"
+       never throws the backdrop back to the top line. */
+    bindDrawerBg: function (body, items) {
+      var self = this;
+      var lines = qsa(".citem", body);
+      if (!lines.length) { this._activeLine = null; this.setDrawerBg(""); return; }
+      function activate(row) {
+        lines.forEach(function (l) { l.classList.toggle("is-active", l === row); });
+        self._activeLine = row.dataset.key;
+        var idx = lines.indexOf(row);
+        if (items[idx] && items[idx].image) self.setDrawerBg(items[idx].image);
+      }
+      var remembered = lines.filter(function (l) { return l.dataset.key === self._activeLine; })[0];
+      activate(remembered || lines[0]);
+      lines.forEach(function (row) {
+        row.addEventListener("mouseenter", function () { activate(row); });
+        row.addEventListener("click", function (e) {
+          if (e.target.closest("a, button, input")) return;
+          activate(row);
+        });
+        // keyboard users tabbing through the lines move the backdrop too
+        row.addEventListener("focusin", function () { activate(row); });
+      });
     },
 
     paintCart: function () {
@@ -440,6 +519,7 @@
           '<p>Your bag is empty.</p><a class="btn btn--ghost" href="shop.html" data-close-cart>Start shopping</a></div>';
         foot.innerHTML = "";
         if (ship) ship.innerHTML = "";
+        this.setDrawerBg("");
         qsa("[data-close-cart]", body).forEach(function (b) {
           b.addEventListener("click", function () { UI.closeCart(); });
         });
@@ -504,6 +584,8 @@
           UI.toast("Removed from bag");
         });
       });
+
+      this.bindDrawerBg(body, items);
     },
 
     openCart: function () {
@@ -528,6 +610,7 @@
       if (!items.length) {
         body.innerHTML = '<div class="cart-empty">' + I.heart + '<p>Nothing saved yet.</p>' +
           '<a class="btn btn--ghost" href="shop.html" data-close-cart>Browse the store</a></div>';
+        this.setDrawerBg("");
       } else {
         body.innerHTML = items.map(function (p) {
           return '<div class="citem" data-key="' + esc(p.id) + '">' +
@@ -561,6 +644,7 @@
           UI.syncCounts();
         });
       });
+      this.bindDrawerBg(body, items.map(function (p) { return { image: p.images[0] }; }));
       host.classList.add("is-open");
       document.body.classList.add("is-locked");
     },

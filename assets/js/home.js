@@ -69,9 +69,9 @@
       '</div>' +
       '<div class="mhero__swatches" role="tablist" aria-label="Featured drops">' +
         slides.map(function (s, i) {
-          var bg = (s.theme && s.theme.bg) || "#ece5d7";
+          var bg = (s.theme && s.theme.bg) || "#f6f6f6";
           return '<button class="mhero__sw' + (i === 0 ? " is-active" : "") + '" data-sw="' + i + '"' +
-            ' style="--sw:' + esc(UI.safeColor(bg, "#ece5d7")) + '" role="tab" aria-selected="' + (i === 0 ? "true" : "false") + '"' +
+            ' style="--sw:' + esc(UI.safeColor(bg, "#f6f6f6")) + '" role="tab" aria-selected="' + (i === 0 ? "true" : "false") + '"' +
             ' aria-label="' + esc(s.word || ("Slide " + (i + 1))) + '"></button>';
         }).join("") +
       '</div>' +
@@ -85,7 +85,7 @@
 
     function paint() {
       var th = slides[cur].theme || {};
-      host.style.backgroundColor = UI.safeColor(th.bg, "#eae1d3");
+      host.style.backgroundColor = UI.safeColor(th.bg, "#f0f0f0");
       els.forEach(function (el, i) {
         el.classList.toggle("is-active", i === cur);
         var bg = el.querySelector(".mhero__bg-media");

@@ -19,6 +19,30 @@
     '<path d="M18.5 27.2 4 43.6c-1.4 1.6-.3 4.1 2 4.1h30c2.3 0 3.4-2.5 2-4.1L23.5 27.2a3.9 3.9 0 0 0-5 0z"/>' +
     '</svg>';
 
+  /* The rail's quick add. A piece created here is a real product — it goes into
+     the same store the admin writes to, so it reaches the shop, the product page
+     and the rail on the next look. */
+  var ADD_FORM =
+    '<label class="rail-add__f">Name' +
+      '<input class="rail-add__in" id="ra-name" type="text" placeholder="Eclipse Oversized Tee" autocomplete="off"></label>' +
+    '<div class="rail-add__pair">' +
+      '<label class="rail-add__f">Price' +
+        '<input class="rail-add__in" id="ra-price" type="number" min="0" step="10" placeholder="3990"></label>' +
+      '<label class="rail-add__f">Was' +
+        '<input class="rail-add__in" id="ra-compare" type="number" min="0" step="10" placeholder="optional"></label>' +
+      '<label class="rail-add__f">Stock' +
+        '<input class="rail-add__in" id="ra-stock" type="number" min="0" step="1" value="24"></label>' +
+    '</div>' +
+    '<p class="rail-add__hint">Sizes start at S–XXL; change anything later from the admin.</p>' +
+    '<label class="rail-add__f">Picture' +
+      '<input class="rail-add__in" id="ra-url" type="text" placeholder="paste a link, or pick a file" autocomplete="off"></label>' +
+    '<div class="rail-add__row">' +
+      '<button class="rail-btn" id="ra-pick" type="button">Pick a file</button>' +
+      '<span class="rail-add__note" id="ra-note">Nothing picked yet.</span>' +
+    '</div>' +
+    '<input type="file" id="ra-file" accept="image/png,image/jpeg,image/webp" hidden>' +
+    '<button class="rail-btn rail-btn--solid" id="ra-save" type="button">Hang it on the rail</button>';
+
   var clamp = function (v, a, b) { return v < a ? a : v > b ? b : v; };
   var lerp = function (a, b, t) { return a + (b - a) * t; };
 
@@ -69,15 +93,18 @@
     this._off.push(function () { target.removeEventListener(evt, fn, o); });
   };
 
+  /* Adding a piece writes into the shop, so the control is shown only to a
+     signed-in admin; a visitor sees the plain rail. */
+  Rail.prototype.canAdd = function () {
+    return !!(S && S.isLoggedIn && S.isLoggedIn());
+  };
+
   Rail.prototype.products = function () {
     var list = S.products ? S.products({}) : (S.db.products || []);
     return list.filter(function (p) { return p.active !== false; });
   };
 
   Rail.prototype.build = function () {
-    var self = this;
-    var prods = this.products();
-
     var stage =
         '<div class="rail-stage" id="rail-stage">' +
           '<div class="rail-spot"></div>' +
@@ -93,6 +120,12 @@
             '<p class="rail-caption__meta" id="rail-meta"></p>' +
           '</div>' +
           '<div class="rail-word">Wardrobe</div>' +
+          /* the front-page rail has no control column, so it gets a single
+             button that opens the same quick add over the stage */
+          (!this.panel && this.canAdd()
+            ? '<button class="rail-btn rail-addbtn" id="ra-open" type="button">+ Add a piece</button>' +
+              '<div class="rail-add rail-add--pop" id="ra-pop" hidden><b class="rail-add__t">Add a piece</b>' + ADD_FORM + '</div>'
+            : "") +
         '</div>';
 
     var panel = this.panel ?
@@ -112,6 +145,9 @@
             '<small>one transparent PNG/WebP with front&nbsp;+&nbsp;side, or front only</small>' +
           '</div>' +
           '<input type="file" id="rail-file" accept="image/png,image/webp" hidden>' +
+          (this.canAdd()
+            ? '<div class="rail-add"><b class="rail-add__t">Add a piece</b>' + ADD_FORM + '</div>'
+            : '<p class="rail-add__lock">Add a piece is locked — <a href="admin.html">sign in to the admin</a> in this tab, then reload.</p>') +
           '<div class="rail-slider">' +
             '<div class="rail-slider__head"><span class="rail-label" style="margin:0">Puff</span>' +
               '<span class="rail-slider__val" id="puff-val">62%</span></div>' +
@@ -142,9 +178,14 @@
     this.hintEl = this.panel ? qs("#rail-hint", this.host) : null;
     this.toggleBtn = this.panel ? qs("#rail-toggle", this.host) : null;
     this.chipEls = [];
+    this.hang();
+  };
 
-    /* one hanging node per product */
-    prods.forEach(function (p, i) {
+  /* One hanging node per active product, then the panel's chips. Re-run by
+     rebuild() when a piece is added, so it cannot assume a first-time rail. */
+  Rail.prototype.hang = function () {
+    var self = this;
+    this.products().forEach(function (p, i) {
       var cfg = RAIL_ASSETS[p.handle] || {
         src: (p.images || [])[0] || "assets/img/placeholder.jpg",
         label: shortLabel(p.title),
@@ -203,23 +244,27 @@
     this.chipEls = qsa(".rail-chip", chips);
   };
 
-  /* keep the range input and the state in one place, so the touch default can
-     be applied whether or not a control panel was rendered */
-  Rail.prototype.setPuff = function (v) {
-    this.puff = v;
-    var input = qs("#puff", this.host), out = qs("#puff-val", this.host);
-    if (input) input.value = v;
-    if (out) out.textContent = v + "%";
+  /* Re-hang everything after the shop changes. The stage, the sliders and the
+     buttons stay as they are, so the rail does not jump back to the start. */
+  Rail.prototype.rebuild = function () {
+    qsa(".hang", this.track).forEach(function (n) { n.remove(); });
+    this.items = [];
+    this.chipEls = [];
+    this.focus = -1;
+    this.hover = -1;
+    this.hang();
+    this.bindItems();
+    this.layout();
+    this.caption();
   };
 
-  /* ------------------------------------------------------------------ */
-  Rail.prototype.bind = function () {
+  /* Listeners for the hangers and the chips. Split out of bind() so a rebuild
+     can wire new garments without re-adding the stage's own controls. */
+  Rail.prototype.bindItems = function () {
     var self = this;
-
     this.chipEls.forEach(function (c) {
       self.on(c, "click", function () { self.focusTo(parseInt(c.dataset.goto, 10)); });
     });
-
     this.items.forEach(function (it) {
       var hit = qs(".hang__hit", it.node);
       self.on(hit, "mouseenter", function () { self.hover = it.i; self.caption(); });
@@ -234,6 +279,93 @@
         if (e.key === "Enter" || e.key === " ") { e.preventDefault(); self.focusTo(it.i); }
       });
     });
+  };
+
+  /* Quick add: create a real product from the rail and hang it straight away.
+     The picture can be a pasted link or a file — a file is shrunk to a data URL
+     because the shop keeps its pictures inside one localStorage key. */
+  Rail.prototype.bindAdd = function () {
+    var self = this;
+    var save = qs("#ra-save", this.host);
+    if (!save) return;
+
+    var name = qs("#ra-name", this.host),
+        priceEl = qs("#ra-price", this.host),
+        wasEl = qs("#ra-compare", this.host),
+        stockEl = qs("#ra-stock", this.host),
+        urlEl = qs("#ra-url", this.host),
+        fileEl = qs("#ra-file", this.host),
+        note = qs("#ra-note", this.host),
+        open = qs("#ra-open", this.host),
+        pop = qs("#ra-pop", this.host);
+    var picked = "";
+
+    if (open && pop) {
+      this.on(open, "click", function () {
+        pop.hidden = !pop.hidden;
+        if (!pop.hidden) name.focus();
+      });
+    }
+
+    this.on(qs("#ra-pick", this.host), "click", function () { fileEl.click(); });
+    this.on(fileEl, "change", function () {
+      var f = fileEl.files && fileEl.files[0];
+      if (!f) return;
+      note.textContent = "Shrinking " + f.name + "…";
+      UI.shrinkImage(f, function (dataUrl) {
+        if (!dataUrl) { note.textContent = "That file would not open — try another."; return; }
+        picked = dataUrl;
+        urlEl.value = "";
+        note.textContent = f.name + " is ready";
+      });
+    });
+    /* a pasted link and a picked file cannot both claim to be the picture */
+    this.on(urlEl, "input", function () { if (urlEl.value.trim()) picked = ""; });
+
+    this.on(save, "click", function () {
+      var title = name.value.trim();
+      if (!title) { note.textContent = "Give it a name first."; name.focus(); return; }
+      var price = parseFloat(priceEl.value, 10) || 0;
+      var was = parseFloat(wasEl.value, 10) || 0;
+      S.addProduct({
+        title: title,
+        category: (S.categories()[0] || {}).id || "tops",
+        price: price,
+        compareAt: was > price ? was : null,
+        stock: parseInt(stockEl.value, 10) || 0,
+        sizes: ["S", "M", "L", "XL", "XXL"],
+        images: [picked || urlEl.value.trim() || "assets/img/ziq/cat-tees.jpg"],
+        active: true,
+        isNew: true,
+        featured: false
+      });
+      self.rebuild();
+      self.focusTo(0);          /* addProduct puts the new piece at the front */
+      UI.toast(title + " is hanging on the rail");
+      [name, priceEl, wasEl, urlEl].forEach(function (el) { el.value = ""; });
+      stockEl.value = "24";
+      fileEl.value = "";
+      picked = "";
+      note.textContent = "Nothing picked yet.";
+      if (pop) pop.hidden = true;
+    });
+  };
+
+  /* keep the range input and the state in one place, so the touch default can
+     be applied whether or not a control panel was rendered */
+  Rail.prototype.setPuff = function (v) {
+    this.puff = v;
+    var input = qs("#puff", this.host), out = qs("#puff-val", this.host);
+    if (input) input.value = v;
+    if (out) out.textContent = v + "%";
+  };
+
+  /* ------------------------------------------------------------------ */
+  Rail.prototype.bind = function () {
+    var self = this;
+
+    this.bindItems();
+    this.bindAdd();
 
     if (this.toggleBtn) {
       this.on(this.toggleBtn, "click", function () {

@@ -22,7 +22,7 @@
 <link rel="canonical" href="https://ziqwear.com/contact.html">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;500;600;700&family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/style.css">
 <link rel="icon" href="assets/img/favicon.png" type="image/png">
 <link rel="apple-touch-icon" href="assets/img/favicon.png">
@@ -30,18 +30,18 @@
   .contact-grid { display:grid; grid-template-columns: 1fr 1fr; gap:64px; padding:20px 0 90px; }
   .info-block { padding:22px 0; border-bottom:1px solid var(--line-soft); }
   .info-block:first-child { padding-top:0; }
-  .info-block h4 { font-family:var(--font-ui); font-size:10px; letter-spacing:.18em; text-transform:uppercase; color:var(--muted); margin-bottom:8px; }
-  .info-block p, .info-block a { font-size:15px; }
+  .info-block h4 { font-family:var(--font-ui); font-size:var(--fs-tag); letter-spacing:var(--ls-caps-lg); text-transform:uppercase; color:var(--muted); margin-bottom:8px; }
+  .info-block p, .info-block a { font-size:var(--fs-lead); }
   .info-block a:hover { text-decoration:underline; }
   .faq { border-top:1px solid var(--line-soft); }
   .faq-item { border-bottom:1px solid var(--line-soft); }
-  .faq-q { display:flex; align-items:center; justify-content:space-between; width:100%; padding:22px 0; text-align:left; font-size:15px; }
+  .faq-q { display:flex; align-items:center; justify-content:space-between; width:100%; padding:22px 0; text-align:left; font-size:var(--fs-lead); }
   .faq-q svg { flex:none; transition:transform .3s var(--ease); }
   .faq-item.is-open .faq-q svg { transform:rotate(45deg); }
   .faq-a { display:grid; grid-template-rows:0fr; transition:grid-template-rows .35s var(--ease); }
   .faq-item.is-open .faq-a { grid-template-rows:1fr; }
   .faq-a > div { overflow:hidden; }
-  .faq-a p { padding-bottom:22px; font-size:14px; line-height:1.75; color:var(--ink-60); max-width:560px; }
+  .faq-a p { padding-bottom:22px; font-size:var(--fs-body); line-height:var(--lh-loose); color:var(--ink-60); max-width:560px; }
   .send-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
   .send-row .btn { margin-top:0; }
   @media (max-width: 520px) { .send-row { grid-template-columns:1fr; } }
@@ -79,7 +79,7 @@
       </div>
 
       <div>
-        <h2 style="font-family:var(--font-display);font-size:32px;font-weight:400;margin-bottom:20px">Send a message</h2>
+        <h2 style="font-family:var(--font-display);font-size:var(--fs-stat);font-weight:var(--fw-regular);margin-bottom:20px">Send a message</h2>
         <form id="contact-form">
           <div class="field-row">
             <div class="field"><label for="cf-name">Name</label><input id="cf-name" required placeholder="Your name"></div>
@@ -94,7 +94,7 @@
             <button class="btn btn--full" type="submit" id="cf-send">Send on WhatsApp</button>
             <button class="btn btn--ghost btn--full" type="button" id="cf-mail">Send by email</button>
           </div>
-          <p class="f-help" style="margin-top:10px;font-size:12px;color:var(--muted);line-height:1.6">WhatsApp opens with your message already written. Email opens your mail app with the same text — either way, just hit send.</p>
+          <p class="f-help" style="margin-top:10px;font-size:var(--fs-meta);color:var(--muted);line-height:var(--lh-body)">WhatsApp opens with your message already written. Email opens your mail app with the same text — either way, just hit send.</p>
         </form>
       </div>
     </div>
@@ -103,7 +103,7 @@
   <section class="section section--cream" id="shipping">
     <div class="wrap wrap--narrow">
       <p class="eyebrow">Good to know</p>
-      <h2 style="font-family:var(--font-display);font-size:clamp(30px,4vw,44px);font-weight:400;margin:10px 0 30px">Shipping, returns &amp; sizing</h2>
+      <h2 style="font-size:var(--fs-title);font-weight:var(--fw-bold);margin:10px 0 30px">Shipping, returns &amp; sizing</h2>
       <div class="faq" id="faq"></div>
     </div>
   </section>

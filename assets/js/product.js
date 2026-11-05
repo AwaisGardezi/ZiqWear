@@ -93,6 +93,7 @@
 
     bind();
     renderSticky();
+    renderSections();
     renderRelated();
   }
 
@@ -271,6 +272,215 @@
       '<div class="section-head"><div><p class="eyebrow">Goes with it</p><h2>You may also <em>like</em></h2></div></div>' +
       '<div class="pgrid">' + list.map(function (p) { return UI.productCard(p); }).join("") + '</div></div>';
     UI.bindCards(host);
+  }
+
+  /* ---------- owner-built page sections ----------
+     Key features, material, performance and style are filled in per product
+     under /admin.html → Products → Edit. A block that was left empty renders
+     nothing, so products that have not been written up yet keep the page
+     exactly as it was. */
+
+  function txt(v) { return String(v == null ? "" : v).trim(); }
+
+  function headHTML(eyebrow, heading) {
+    return '<div class="section-head"><div><p class="eyebrow">' + esc(eyebrow) + '</p>' +
+      '<h2>' + heading + '</h2></div></div>';
+  }
+
+  function clearHost(id) {
+    var host = qs("#" + id);
+    if (host) host.innerHTML = "";
+    return host;
+  }
+
+  function openShot(src) {
+    if (!src) return;
+    var lb = qs("#lightbox");
+    if (!lb) return;
+    qs("#lb-img").src = src;
+    lb.style.display = "grid";
+    document.body.classList.add("is-locked");
+  }
+
+  /* ---------- key features ---------- */
+  function renderFeatures() {
+    var host = clearHost("pdp-features");
+    var list = (product.features || []).filter(function (f) {
+      return f && (txt(f.title) || txt(f.text) || (f.images || []).filter(Boolean).length);
+    });
+    if (!host || !list.length) return;
+
+    host.innerHTML = '<section class="section pdp-sec"><div class="wrap">' +
+      headHTML("Key features", "What makes it <em>worth the hanger</em>") +
+      '<div class="feat">' + list.map(function (f, i) {
+        var pics = (f.images || []).filter(Boolean);
+        var num = (i + 1 < 10 ? "0" : "") + (i + 1);
+        return '<article class="feat__row' + (pics.length ? "" : " feat__row--text") + '">' +
+          (pics.length
+            ? '<div class="feat__pics' + (pics.length === 1 ? " feat__pics--one" : "") +
+              (f.fit === "cover" ? " is-cover" : "") + '">' +
+              pics.map(function (src, j) {
+                return '<button type="button" class="feat__pic" data-feat-shot="' + i + "|" + j + '" aria-label="Enlarge picture ' + (j + 1) + '">' +
+                  '<img src="' + esc(src) + '" alt="' + esc(txt(f.title) || product.title) + '" loading="lazy">' +
+                '</button>';
+              }).join("") +
+            '</div>'
+            : "") +
+          '<div class="feat__body">' +
+            '<span class="feat__num">' + num + '</span>' +
+            (txt(f.title) ? '<h3 class="feat__t">' + esc(f.title) + '</h3>' : "") +
+            (txt(f.text) ? '<p class="feat__x">' + esc(f.text) + '</p>' : "") +
+          '</div>' +
+        '</article>';
+      }).join("") + '</div></div></section>';
+
+    qsa("[data-feat-shot]", host).forEach(function (b) {
+      b.addEventListener("click", function () {
+        var at = b.dataset.featShot.split("|");
+        var pics = ((list[+at[0]] || {}).images || []).filter(Boolean);
+        openShot(pics[+at[1]]);
+      });
+    });
+  }
+
+  /* ---------- material specifications ----------
+     The numbered dots sit on the picture at the spot the owner clicked; the
+     list beside it carries the same numbers, so either one can be the way in. */
+  function renderMaterial() {
+    var host = clearHost("pdp-material");
+    var m = product.material;
+    var notes = ((m && m.notes) || []).filter(function (n) { return n && txt(n.text); });
+    var specs = ((m && m.specs) || []).filter(function (s) { return s && (txt(s.label) || txt(s.value)); });
+    var shot = m ? txt(m.image) : "";
+    if (!host || !m || !(shot || txt(m.title) || txt(m.intro) || notes.length || specs.length)) return;
+
+    host.innerHTML = '<section class="section section--cream pdp-sec"><div class="wrap">' +
+      headHTML("Material specifications", "What it is <em>made of</em>") +
+      '<div class="mat">' +
+        (shot
+          ? '<figure class="mat__shot">' +
+              '<img src="' + esc(shot) + '" alt="' + esc(txt(m.title) || product.title) + '" loading="lazy">' +
+              notes.map(function (n, i) {
+                var x = Math.min(100, Math.max(0, parseFloat(n.x)));
+                var y = Math.min(100, Math.max(0, parseFloat(n.y)));
+                if (isNaN(x)) x = 50;
+                if (isNaN(y)) y = 50;
+                return '<button type="button" class="mat__pin" data-pin="' + i + '" style="left:' + x + '%;top:' + y + '%">' +
+                  '<span>' + (i + 1) + '</span><em>' + esc(n.text) + '</em></button>';
+              }).join("") +
+            '</figure>'
+          : "") +
+        '<div class="mat__side">' +
+          (txt(m.title) ? '<h3 class="mat__t">' + esc(m.title) + '</h3>' : "") +
+          (txt(m.intro) ? '<p class="mat__x">' + esc(m.intro) + '</p>' : "") +
+          (notes.length
+            ? '<ol class="mat__notes">' + notes.map(function (n, i) {
+                return '<li data-note="' + i + '"><span>' + (i + 1) + '</span><p>' + esc(n.text) + '</p></li>';
+              }).join("") + '</ol>'
+            : "") +
+          (specs.length
+            ? '<dl class="mat__specs">' + specs.map(function (s) {
+                return '<div class="mat__spec"><dt>' + esc(txt(s.label)) + '</dt><dd>' + esc(txt(s.value)) + '</dd></div>';
+              }).join("") + '</dl>'
+            : "") +
+        '</div>' +
+      '</div></div></section>';
+
+    var pins = qsa("[data-pin]", host);
+    var lines = qsa("[data-note]", host);
+    function light(i) {
+      pins.forEach(function (b) { b.classList.toggle("is-on", +b.dataset.pin === i); });
+      lines.forEach(function (li) { li.classList.toggle("is-on", +li.dataset.note === i); });
+    }
+    pins.forEach(function (b) {
+      b.addEventListener("click", function () {
+        var i = +b.dataset.pin;
+        if (b.classList.contains("is-on")) { light(-1); return; }
+        light(i);
+        if (lines[i]) lines[i].scrollIntoView({ block: "nearest", behavior: "smooth" });
+      });
+    });
+    lines.forEach(function (li) {
+      li.addEventListener("click", function () {
+        var i = +li.dataset.note;
+        light(pins[i] && pins[i].classList.contains("is-on") ? -1 : i);
+      });
+    });
+  }
+
+  /* ---------- performance ---------- */
+  function renderPerformance() {
+    var host = clearHost("pdp-performance");
+    var rows = (product.performance || []).filter(function (r) {
+      return r && (txt(r.label) || txt(r.value) || txt(r.note));
+    });
+    if (!host || !rows.length) return;
+
+    host.innerHTML = '<section class="section pdp-sec pdp-sec--dark"><div class="wrap">' +
+      headHTML("Performance", "How it <em>holds up</em>") +
+      '<div class="perf">' + rows.map(function (r) {
+        return '<div class="perf__cell">' +
+          (txt(r.value) ? '<p class="perf__v">' + esc(r.value) + '</p>' : "") +
+          (txt(r.label) ? '<p class="perf__l">' + esc(r.label) + '</p>' : "") +
+          (txt(r.note) ? '<p class="perf__n">' + esc(r.note) + '</p>' : "") +
+        '</div>';
+      }).join("") + '</div></div></section>';
+  }
+
+  /* ---------- style ----------
+     A vertical clip on the left, and on the right the pieces worn in it. Only
+     the handle is stored, so the picture and the price always come from the
+     live product rather than a copy made when someone last edited the page. */
+  function renderStyle() {
+    var host = clearHost("pdp-style");
+    var st = product.style;
+    var clip = st ? txt(st.video) : "";
+    var items = ((st && st.products) || [])
+      .map(function (id) { return S.productById(id) || S.product(id); })
+      .filter(function (p) { return p && p.active !== false && p.id !== product.id; });
+    if (!host || !st || !(clip || items.length || txt(st.intro))) return;
+
+    host.innerHTML = '<section class="section pdp-sec"><div class="wrap">' +
+      headHTML("Styled with", "The <em>full look</em>") +
+      '<div class="sty' + (clip ? "" : " sty--no-clip") + '">' +
+        (clip
+          ? '<div class="sty__clip"><video controls loop playsinline muted preload="metadata"' +
+            ' poster="' + esc((product.images || [])[0] || "") + '"></video></div>'
+          : "") +
+        '<div class="sty__shop">' +
+          (txt(st.title) ? '<h3 class="sty__t">' + esc(st.title) + '</h3>' : "") +
+          (txt(st.intro) ? '<p class="sty__x">' + esc(st.intro) + '</p>' : "") +
+          (items.length
+            ? '<p class="sty__lead">In this look</p><ul class="sty__list">' + items.map(function (p) {
+                return '<li><a class="sty__item" href="product.html?p=' + encodeURIComponent(p.handle || p.id) + '">' +
+                  '<img src="' + esc((p.images || [])[0] || "") + '" alt="' + esc(p.title) + '" loading="lazy">' +
+                  '<span class="sty__meta"><b>' + esc(p.title) + '</b>' +
+                    '<em>' + esc((p.colors || [])[0] || p.category || "") + '</em>' +
+                    '<span>' + UI.money(p.price) + '</span></span>' +
+                  '<span class="sty__go">' + I.arrow + '</span>' +
+                '</a></li>';
+              }).join("") + '</ul>'
+            : "") +
+        '</div>' +
+      '</div></div></section>';
+
+    if (!clip) return;
+    var video = qs(".sty__clip video", host);
+    if (!video) return;
+    /* A clip uploaded in the admin lives in that browser's IndexedDB and is
+       stored as a "ziqmedia:<id>" reference; everything else is a plain path. */
+    if (!window.ZiqMedia || !ZiqMedia.isRef(clip)) { video.src = clip; return; }
+    ZiqMedia.url(clip, function (src) {
+      var stillThere = qs(".sty__clip video", host);
+      if (stillThere && src) stillThere.src = src;
+    });
+  }
+
+  function renderSections() {
+    renderFeatures();
+    renderMaterial();
+    renderPerformance();
+    renderStyle();
   }
 
   /* ---------- SEO: self-identify this product page ----------

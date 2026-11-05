@@ -17,7 +17,7 @@
   function render(list, query) {
     var host = qs("#orders-list");
     if (!query) {
-      host.innerHTML = '<p style="font-size:13px;color:var(--muted)">No number entered yet.</p>';
+      host.innerHTML = '<p style="font-size:var(--fs-sm);color:var(--muted)">No number entered yet.</p>';
       return;
     }
     if (!list.length) {
@@ -26,11 +26,11 @@
         '<a class="btn btn--ghost" href="https://wa.me/' + esc(S.settings.whatsapp) + '" target="_blank" rel="noopener">Message support</a></div>';
       return;
     }
-    host.innerHTML = '<p style="font-size:12.5px;color:var(--muted);margin-bottom:16px">' + list.length + ' order' + (list.length > 1 ? "s" : "") + ' found</p>' +
+    host.innerHTML = '<p style="font-size:var(--fs-meta);color:var(--muted);margin-bottom:16px">' + list.length + ' order' + (list.length > 1 ? "s" : "") + ' found</p>' +
       list.map(function (o) {
         var stepIdx = STEPS.indexOf(o.status);
         var timeline = o.status === "cancelled"
-          ? '<p style="font-size:12.5px;color:var(--sale);margin-top:14px">This order was cancelled. Message us if this looks wrong.</p>'
+          ? '<p style="font-size:var(--fs-meta);color:var(--sale);margin-top:14px">This order was cancelled. Message us if this looks wrong.</p>'
           : '<div class="timeline">' + STEPS.map(function (s, i) {
             return '<div class="tl-step' + (i <= stepIdx ? " is-done" : "") + '">' +
               '<div class="tl-dot"></div><span>' + LABEL[s] + '</span></div>';
@@ -49,11 +49,11 @@
             o.items.map(function (i) {
               return '<div style="display:flex;gap:8px;align-items:center">' +
                 '<img src="' + esc(i.image) + '" alt="" style="width:44px;height:56px;object-fit:cover">' +
-                '<div><p style="font-size:12px;max-width:170px">' + esc(i.title) + '</p>' +
-                '<p style="font-size:11px;color:var(--muted)">' + [i.color, i.size].filter(Boolean).map(esc).join(" · ") + ' × ' + i.qty + '</p></div></div>';
+                '<div><p style="font-size:var(--fs-meta);max-width:170px">' + esc(i.title) + '</p>' +
+                '<p style="font-size:var(--fs-minor);color:var(--muted)">' + [i.color, i.size].filter(Boolean).map(esc).join(" · ") + ' × ' + i.qty + '</p></div></div>';
             }).join("") +
           '</div>' +
-          '<p style="font-size:12px;color:var(--muted);margin-top:16px">Delivering to ' + esc((o.customer || {}).address) + ', ' + esc((o.customer || {}).city) + ' · ' + esc(o.payment === "cod" ? "Cash on delivery" : "Bank transfer") + '</p>' +
+          '<p style="font-size:var(--fs-meta);color:var(--muted);margin-top:16px">Delivering to ' + esc((o.customer || {}).address) + ', ' + esc((o.customer || {}).city) + ' · ' + esc(o.payment === "cod" ? "Cash on delivery" : "Bank transfer") + '</p>' +
         '</div>';
       }).join("");
   }
@@ -102,7 +102,7 @@
         }
 
         if (!order) {
-          msgHost.innerHTML = '<p style="font-size:12.5px;color:var(--sale);padding:4px 0">' +
+          msgHost.innerHTML = '<p style="font-size:var(--fs-meta);color:var(--sale);padding:4px 0">' +
             'No order found with ID "' + esc(orderId) + '". Check the ID and try again, or ' +
             '<a href="https://wa.me/' + esc(S.settings.whatsapp) + '" target="_blank" rel="noopener" style="text-decoration:underline">message us on WhatsApp</a>.</p>';
           return;
@@ -146,7 +146,7 @@
         lines.push("ZIQWEAR | Zenith in Quality");
         lines.push(S.settings.address || "");
 
-        msgHost.innerHTML = '<p style="font-size:12.5px;color:var(--muted);padding:4px 0">Sending status email to ' + esc(email) + '...</p>';
+        msgHost.innerHTML = '<p style="font-size:var(--fs-meta);color:var(--muted);padding:4px 0">Sending status email to ' + esc(email) + '...</p>';
 
         window.Email.send({
           subject: "Order Status - " + order.id + " - " + statusLabel + " - ZIQWEAR",
@@ -156,11 +156,11 @@
           toEmail: email
         }, function (ok, err) {
           if (ok) {
-            msgHost.innerHTML = '<p style="font-size:12.5px;color:#22B24C;padding:4px 0">' +
+            msgHost.innerHTML = '<p style="font-size:var(--fs-meta);color:#22B24C;padding:4px 0">' +
               'Status email sent to ' + esc(email) + '! Check your inbox.</p>';
             UI.toast("Status email sent");
           } else {
-            msgHost.innerHTML = '<p style="font-size:12.5px;color:var(--sale);padding:4px 0">' +
+            msgHost.innerHTML = '<p style="font-size:var(--fs-meta);color:var(--sale);padding:4px 0">' +
               'Could not send email: ' + esc(err || "Server error") + '. Try again or ' +
               '<a href="https://wa.me/' + esc(S.settings.whatsapp) + '" target="_blank" rel="noopener" style="text-decoration:underline">WhatsApp us</a>.</p>';
           }

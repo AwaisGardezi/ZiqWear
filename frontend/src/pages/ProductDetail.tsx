@@ -6,6 +6,7 @@ import { Product } from '../types';
 import { usePageMeta } from '../hooks/usePageMeta';
 import { formatPrice } from '../utils/format';
 import { useCartStore } from '../store/cartStore';
+import { ProductGallery } from '../components/ProductGallery';
 
 export function ProductDetail() {
   const { handle } = useParams<{ handle: string }>();
@@ -14,7 +15,6 @@ export function ProductDetail() {
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
-  const [activeImage, setActiveImage] = useState(0);
   const [color, setColor] = useState<string>('');
   const [size, setSize] = useState<string>('');
   const [adding, setAdding] = useState(false);
@@ -85,8 +85,6 @@ export function ProductDetail() {
     );
   }
 
-  const images = product.images.length > 0 ? product.images : [{ url: '/placeholder.jpg', altText: product.title }];
-  const currentImage = images[Math.min(activeImage, images.length - 1)];
   const price = Number(selectedVariant?.price ?? product.minPrice ?? product.basePrice);
   const compareAtPrice = Number(selectedVariant?.compareAtPrice ?? product.compareAtPrice ?? 0);
   const discount = compareAtPrice > price ? Math.round(((compareAtPrice - price) / compareAtPrice) * 100) : 0;
@@ -118,24 +116,12 @@ export function ProductDetail() {
         </nav>
 
         <div className="grid lg:grid-cols-2 gap-12">
-          <div className="space-y-4">
-            <div className="relative aspect-square overflow-hidden bg-cream-deep border border-line">
-              <img src={currentImage.url} alt={currentImage.altText || product.title} className="w-full h-full object-cover" />
-            </div>
-            {images.length > 1 && (
-              <div className="flex gap-2 overflow-x-auto pb-2">
-                {images.map((image, index) => (
-                  <button
-                    key={image.url + index}
-                    onClick={() => setActiveImage(index)}
-                    className={`flex-shrink-0 w-20 h-20 overflow-hidden border-2 ${activeImage === index ? 'border-brass' : 'border-line'}`}
-                  >
-                    <img src={image.url} alt={image.altText || product.title} className="w-full h-full object-cover" />
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
+          <ProductGallery
+            images={product.images}
+            variants={variants}
+            activeColor={colors.length > 1 ? color : undefined}
+            title={product.title}
+          />
 
           <div className="space-y-6">
             <div>
